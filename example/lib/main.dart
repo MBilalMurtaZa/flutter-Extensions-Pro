@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
 
+            Text(DateTime.now().format(pattern: 'HH:mm:ss')).paddingAll(16).center().withBackgroundColor(Colors.yellow).withBackgroundGradient([Colors.yellow, Colors.red]),
             Text("with Background Color").paddingAll(16).center().withBackgroundColor(Colors.yellow).withBackgroundGradient([Colors.yellow, Colors.red]),
             Text("with Background Gradient").paddingAll(16).center().withBackgroundGradient([Colors.yellow, Colors.red],),
             Text("with Background Gradient").paddingAll(16).center().withGlossyEffect(overlayColor: Colors.green,glossFactor: 0.5 ),

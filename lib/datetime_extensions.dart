@@ -115,13 +115,102 @@ extension DateTimeExtensions on DateTime {
   /// Subtracts a specified number of hours from the current DateTime
   DateTime subtractHours(int hours) => subtract(Duration(hours: hours));
 
-  /// Formats the DateTime to a readable string
-  String format({String pattern = "yyyy-MM-dd HH:mm:ss"}) {
-    return "$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')} "
-        "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}";
+
+  String format({String pattern = 'dd-MM-yyyy'}) {
+    final daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    final monthsOfYear = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
+    final isPM = hour >= 12;
+    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+
+    final replacements = {
+      "yyyy": year.toString(),
+      "yy": year.toString().substring(2),
+      "MMMM": monthsOfYear[month - 1],
+      "MMM": monthsOfYear[month - 1].substring(0, 3),
+      "MM": month.toString().padLeft(2, '0'),
+      "M": month.toString(),
+      "dd": day.toString().padLeft(2, '0'),
+      "d": day.toString(),
+      "EEEE": daysOfWeek[weekday - 1],
+      "EEE": daysOfWeek[weekday - 1].substring(0, 3),
+      "HH": hour.toString().padLeft(2, '0'),
+      "H": hour.toString(),
+      "hh": hour12.toString().padLeft(2, '0'),
+      "h": hour12.toString(),
+      "mm": minute.toString().padLeft(2, '0'),
+      "m": minute.toString(),
+      "ss": second.toString().padLeft(2, '0'),
+      "s": second.toString(),
+      "SSS": millisecond.toString().padLeft(3, '0'),
+      "a": isPM ? "PM" : "AM",
+      "Z": timeZoneOffset(),
+      "z": timeZoneName,
+      "Q": ((month - 1) ~/ 3 + 1).toString(),
+      "DD": dayOfYear().toString().padLeft(3, '0'),
+      "D": dayOfYear().toString(),
+      "ww": weekOfYear().toString().padLeft(2, '0'),
+      "w": weekOfYear().toString(),
+      "u": weekday.toString(),
+    };
+
+    var formatted = pattern;
+    replacements.forEach((key, value) {
+      formatted = formatted.replaceAll(key, value);
+    });
+
+    return formatted;
+  }
+  String formatTime({String pattern = 'HH:mm:ss'}) {
+    return format(pattern: pattern);
   }
 
+
+
+  // Helper method to calculate the day of the year
+  int dayOfYear() {
+    final startOfYear = DateTime(year, 1, 1);
+    return difference(startOfYear).inDays + 1;
+  }
+
+  // Helper method to calculate the week of the year
+  int weekOfYear() {
+    final startOfYear = DateTime(year, 1, 1);
+    final daysSinceStart = difference(startOfYear).inDays;
+    return (daysSinceStart / 7).ceil();
+  }
+
+  // Helper to format timezone offset
+  String timeZoneOffset() {
+    final offset = this.timeZoneOffset;
+    final hours = offset.inHours.toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes % 60).toString().padLeft(2, '0');
+    return "${offset.isNegative ? '-' : '+'}$hours:$minutes";
+  }
 }
+
+
 
 
 extension NullableExtension<T> on T? {
